@@ -69,7 +69,7 @@
                 <a data-toggle="collapse" aria-expanded="true" href="#laravelExamples">
                 <i class="nc-icon nc-briefcase-24"></i>
                     <p>
-                            {{ __('Utilidades') }}
+                            {{ __('Módulos') }}
                         <b class="caret"></b>
                     </p>
                 </a>

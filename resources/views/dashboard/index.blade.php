@@ -164,8 +164,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        Chart.plugins.unregister(ChartDataLabels);
-        
         var ctxEntrada = document.getElementById('usoEntradaChart').getContext('2d');
         var usoEntradaChart = new Chart(ctxEntrada, {
             type: 'bar',
@@ -180,21 +178,18 @@
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
                 plugins: {
                     datalabels: {
                         display: true,
                         color: 'black',
                         align: 'end',
                         anchor: 'end',
-                        formatter: (value) => value,
-                        font: {
-                            weight: 'bold'
-                        }
+                        formatter: (value) => value
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
             }
@@ -214,21 +209,18 @@
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
                 plugins: {
                     datalabels: {
                         display: true,
                         color: 'black',
                         align: 'end',
                         anchor: 'end',
-                        formatter: (value) => value,
-                        font: {
-                            weight: 'bold'
-                        }
+                        formatter: (value) => value
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
             }
@@ -268,10 +260,7 @@
                     datalabels: {
                         display: true,
                         color: 'black',
-                        formatter: (value, context) => value,
-                        font: {
-                            weight: 'bold'
-                        }
+                        formatter: (value, context) => value
                     }
                 }
             }
@@ -311,10 +300,7 @@
                     datalabels: {
                         display: true,
                         color: 'black',
-                        formatter: (value) => value,
-                        font: {
-                            weight: 'bold'
-                        }
+                        formatter: (value, context) => value
                     }
                 }
             }
