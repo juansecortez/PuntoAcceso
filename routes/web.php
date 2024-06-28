@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Controllers\UsoPuertaController;
+
 Route::get('/', function () {
     return redirect('login');
 });
@@ -32,6 +34,7 @@ Auth::routes();
 Route::get('home', 'DashboardController@index')->name('home');
 Route::get('mapa_checadas', 'UsoPuertaController@mapaChecadas')->name('mapa_checadas');
 Route::get('uso_puerta', 'UsoPuertaController@index')->name('uso_puerta.index');
+Route::get('uso_puerta/export', [UsoPuertaController::class, 'export'])->name('uso_puerta.export');
 
 Route::group(['middleware' => 'guest'], function() {
     Route::get('pricing', 'PageController@pricing')->name('page.pricing');
@@ -69,4 +72,3 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('puertas/{puerta}/unassign_all_empleados', 'UsoPuertaController@unassignAllEmpleadosToPuerta')->name('puertas.unassign_all_empleados');
     Route::post('puertas/assign_selected_to_all', 'UsoPuertaController@assignSelectedPuertasToAll')->name('puertas.assign_selected_to_all');
 });
-

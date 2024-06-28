@@ -44,6 +44,14 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary">{{ __('Filtrar') }}</button>
                             </form>
+                            <form method="get" action="{{ route('uso_puerta.export') }}" style="margin-top: 10px;">
+                                <input type="hidden" name="FechaInicio" value="{{ request('FechaInicio', $fechaInicio) }}">
+                                <input type="hidden" name="FechaFin" value="{{ request('FechaFin', $fechaFin) }}">
+                                <input type="hidden" name="Contrato" value="{{ request('Contrato') }}">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-file-excel-o"></i> {{ __('Exportar a Excel') }}
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

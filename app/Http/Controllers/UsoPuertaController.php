@@ -6,6 +6,8 @@ use App\Puerta;
 use App\Contrato;
 use App\UsoPuerta;
 use Illuminate\Http\Request;
+use App\Exports\UsoPuertaExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 class UsoPuertaController extends Controller
 {
@@ -154,5 +156,14 @@ public function mapaChecadas(Request $request)
     $usoPuertas = $query->get();
 
     return view('uso_puerta.mapa_checadas', compact('contratos', 'usoPuertas'));
+}
+
+public function export(Request $request)
+{
+    $fechaInicio = $request->input('FechaInicio');
+    $fechaFin = $request->input('FechaFin');
+    $contrato = $request->input('Contrato');
+
+    return Excel::download(new UsoPuertaExport($fechaInicio, $fechaFin, $contrato), 'uso_puertas.xlsx');
 }
 }
