@@ -13,9 +13,11 @@ class ContratoRequest extends FormRequest
 
     public function rules()
     {
+        $contratoId = $this->route('contrato') ? $this->route('contrato')->id : $this->contrato;
+
         return [
             'NombreContrato' => 'required|string|max:255',
-            'NoContrato' => 'required|string|max:255|unique:contratos,NoContrato,' . $this->contrato,
+            'NoContrato' => 'required|string|max:255|unique:contratos,NoContrato,' . $contratoId,
             'EncargadoInterno' => 'required|string|max:255',
             'EncargadoExterno' => 'required|string|max:255',
         ];

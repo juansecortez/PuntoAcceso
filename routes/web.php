@@ -12,12 +12,11 @@
 */
 
 use App\Http\Controllers\UsoPuertaController;
-
+use App\Http\Controllers\OrganizacionController;
 Route::get('/', function () {
     return redirect('login');
 });
 
-// Routes to clear cache
 Route::get('/clear-cache', function() {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
@@ -26,7 +25,9 @@ Route::get('/clear-cache', function() {
     Artisan::call('route:cache');
     Artisan::call('view:clear');
     Artisan::call('view:cache');
-    return "Cache is cleared and views";
+    Artisan::call('optimize');
+    Artisan::call('optimize:clear');
+    return "Cache is cleared and optimize";
 });
 
 Auth::routes();
@@ -40,6 +41,13 @@ Route::group(['middleware' => 'guest'], function() {
     Route::get('pricing', 'PageController@pricing')->name('page.pricing');
     Route::get('lock', 'PageController@lock')->name('page.lock');
 });
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('organizacion', [OrganizacionController::class, 'edit'])->name('organizacion.edit')->middleware('can:update,App\Organization');
+    Route::put('organizacion', [OrganizacionController::class, 'update'])->name('organizacion.update')->middleware('can:update,App\Organization');
+});
+
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('role', 'RoleController', ['except' => ['show', 'destroy']]);

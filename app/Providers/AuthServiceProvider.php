@@ -9,7 +9,8 @@ use App\User;
 use App\Empleado;
 use App\Category;
 use App\Puerta;
-use App\Contrato; // Añadir el modelo Contrato
+use App\Contrato;
+use App\Organizacion;
 use App\Policies\TagPolicy;
 use App\Policies\ItemPolicy;
 use App\Policies\RolePolicy;
@@ -17,17 +18,13 @@ use App\Policies\UserPolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\EmpleadoPolicy;
 use App\Policies\PuertaPolicy;
-use App\Policies\ContratoPolicy; // Añadir la política ContratoPolicy
+use App\Policies\ContratoPolicy;
+use App\Policies\OrganizationPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
     protected $policies = [
         User::class => UserPolicy::class,
         Category::class => CategoryPolicy::class,
@@ -36,14 +33,10 @@ class AuthServiceProvider extends ServiceProvider
         Tag::class => TagPolicy::class,
         Empleado::class => EmpleadoPolicy::class,
         Puerta::class => PuertaPolicy::class,
-        Contrato::class => ContratoPolicy::class, // Añadir la política ContratoPolicy
+        Contrato::class => ContratoPolicy::class,
+        Organization::class => OrganizationPolicy::class,
     ];
 
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
     public function boot()
     {
         $this->registerPolicies();
@@ -52,6 +45,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('manage-users', 'App\Policies\UserPolicy@manageUsers');
         Gate::define('manage-empleados', 'App\Policies\EmpleadoPolicy@manageEmpleados');
         Gate::define('manage-puertas', 'App\Policies\PuertaPolicy@managePuertas');
-        Gate::define('manage-contratos', 'App\Policies\ContratoPolicy@manageContratos'); // Añadir la definición de Gate para gestionar contratos
+        Gate::define('manage-contratos', 'App\Policies\ContratoPolicy@manageContratos');
+        Gate::define('manage-organizations', 'App\Policies\OrganizationPolicy@manageOrganizations');
+     
+      
     }
 }

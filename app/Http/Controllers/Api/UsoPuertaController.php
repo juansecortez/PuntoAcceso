@@ -9,39 +9,57 @@ use App\Puerta; // Asegúrate de que la ruta sea correcta
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
 class UsoPuertaController extends Controller
 {
     public function store(Request $request)
     {
-        // Validar las entradas
-        $request->validate([
-            'IdEmpleado' => 'required|exists:empleados,id',
-            'IdPuerta' => 'required|exists:puertas,id',
-            'Fecha' => 'required|date',
-            'latitude' => 'required|numeric',
-            'longitud' => 'required|numeric',
-            'img' => 'required|string', // Validar que img sea una cadena base64
-        ]);
+        // Intenta ejecutar la inserción dentro de una transacción para manejar errores más fácilmente
+        DB::beginTransaction();
 
-        // Convertir la imagen base64 a un archivo y guardarlo
-        $image = $request->img;
-        $image = str_replace('data:image/png;base64,', '', $image); // Remover el prefijo si existe
-        $image = str_replace(' ', '+', $image);
-        $imageName = uniqid() . '.png'; // Generar un nombre único para la imagen
-        $imagePath = 'pictures/' . $imageName;
-        Storage::disk('public')->put($imagePath, base64_decode($image));
+        try {
+            // Validar las entradas
+            $validatedData = $request->validate([
+                'IdEmpleado' => 'required|exists:empleados,id',
+                'IdPuerta' => 'required|exists:puertas,id',
+                'Fecha' => 'required|date',
+                'latitude' => 'required|numeric',
+                'longitud' => 'required|numeric',
+                'img' => 'required|string', // Asegúrate que img sea una cadena base64
+            ]);
 
-        // Crear el nuevo registro en la tabla uso_puerta
-        $usoPuerta = UsoPuerta::create([
-            'IdEmpleado' => $request->IdEmpleado,
-            'IdPuerta' => $request->IdPuerta,
-            'Fecha' => $request->Fecha,
-            'latitude' => $request->latitude,
-            'longitud' => $request->longitud,
-            'img' => $imagePath, // Guardar la ruta de la imagen
-        ]);
+            // Convertir la imagen base64 a un archivo y guardarla
+            $image = $request->img;
+            $image = str_replace('data:image/png;base64,', '', $image); // Remover el prefijo si existe
+            $image = str_replace(' ', '+', $image);
+            $imageName = uniqid() . '.png'; // Generar un nombre único para la imagen
+            $imagePath = 'pictures/' . $imageName;
+            Storage::disk('public')->put($imagePath, base64_decode($image));
 
-        return response()->json(['success' => true, 'data' => $usoPuerta], 201);
+            // Crear el nuevo registro en la tabla uso_puerta
+            $usoPuerta = UsoPuerta::create([
+                'IdEmpleado' => $validatedData['IdEmpleado'],
+                'IdPuerta' => $validatedData['IdPuerta'],
+                'Fecha' => $validatedData['Fecha'],
+                'latitude' => $validatedData['latitude'],
+                'longitud' => $validatedData['longitud'],
+                'img' => $imagePath, // Guardar la ruta de la imagen
+            ]);
+
+            DB::commit(); // Confirmar la transacción
+
+            return response()->json(['success' => true, 'data' => $usoPuerta], 201);
+
+        } catch (Exception $e) {
+            DB::rollBack(); // Revertir todos los cambios en la base de datos
+            Log::error('Error al crear el uso de puerta: ' . $e->getMessage());
+
+            // Devuelve un mensaje de error general
+            return response()->json(['success' => false, 'message' => 'Error al registrar el uso de la puerta'], 500);
+        }
     }
 
     public function filterPost(Request $request)

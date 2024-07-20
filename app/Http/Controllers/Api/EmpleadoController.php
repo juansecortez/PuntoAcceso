@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Empleado;
 use App\Puerta;
+use App\Organization;
 
 class EmpleadoController extends Controller
 {
@@ -17,7 +18,7 @@ class EmpleadoController extends Controller
             'curp' => 'required'
         ]);
 
-        // Buscar el empleado por teléfono y CURP
+        // Buscar el empleado por teléfono y CURP en la base de datos maestra
         $empleado = Empleado::where('Telefono', $request->telefono)
                             ->where('CURP', $request->curp)
                             ->first();
@@ -26,7 +27,10 @@ class EmpleadoController extends Controller
             return response()->json(['error' => 'Empleado no encontrado'], 404);
         }
 
-        // Obtener las puertas asignadas al empleado
+        // Obtener el banner desde el modelo Organization
+        $organizationBanner = Organization::first()->banner;
+
+        // Obtener las puertas asignadas al empleado desde la base de datos maestra
         $puertas = $empleado->puertas;
 
         // Formatear la respuesta
@@ -34,10 +38,9 @@ class EmpleadoController extends Controller
             'Datos' => [
                 'usuario' => [
                     'id' => $empleado->id,
-                  'nombre' => $empleado->Nombre . ' ' . $empleado->ApellidoP . ' ' . $empleado->ApellidoM,
-
-                    'imgurl' => 'https://pactral.com/PuntoAcceso/public/' .$empleado->photo,
-                    'bannerurl' => 'https://www.antevenio.com/wp-content/uploads/2016/04/20-ejemplos-de-banners-creativos.jpg'
+                    'nombre' => $empleado->Nombre . ' ' . $empleado->ApellidoP . ' ' . $empleado->ApellidoM,
+                    'imgurl' => 'https://pactral.com/PuntoAcceso/public/' . $empleado->photo,
+                    'bannerurl' => 'https://pactral.com/PuntoAcceso/public/' . $organizationBanner,
                 ]
             ],
             'puertas' => $puertas->map(function ($puerta) {
