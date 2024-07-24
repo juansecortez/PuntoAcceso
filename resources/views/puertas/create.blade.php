@@ -14,10 +14,10 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h3 class="mb-0">{{ __('Add Puerta') }}</h3>
+                                    <h3 class="mb-0">{{ __('Agregar Puerta') }}</h3>
                                 </div>
                                 <div class="col-4 text-right">
-                                    <a href="{{ route('puertas.index') }}" class="btn btn-sm btn-primary">{{ __('Regresar a la lista ') }}</a>
+                                    <a href="{{ route('puertas.index') }}" class="btn btn-sm btn-primary">{{ __('Regresar a la lista') }}</a>
                                 </div>
                             </div>
                         </div>
@@ -32,12 +32,12 @@
                                         @include('alerts.feedback', ['field' => 'NombrePuerta'])
                                     </div>
                                     <div class="form-group{{ $errors->has('latitude') ? ' has-danger' : '' }}">
-                                        <label class="form-control-label" for="input-latitude">{{ __('Latitude') }}</label>
+                                        <label class="form-control-label" for="input-latitude">{{ __('Latitud') }}</label>
                                         <div class="input-group">
-                                            <input type="text" name="latitude" id="input-latitude" class="form-control{{ $errors->has('latitude') ? ' is-invalid' : '' }}" placeholder="{{ __('Latitude') }}" value="{{ old('latitude') }}" required>
+                                            <input type="text" name="latitude" id="input-latitude" class="form-control{{ $errors->has('latitude') ? ' is-invalid' : '' }}" placeholder="{{ __('Latitud') }}" value="{{ old('latitude') }}" required>
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mapModal">
-                                                    <i class="nc-icon nc-pin-3"></i> <!-- Icono de mapa -->
+                                                    <i class="nc-icon nc-pin-3"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -49,7 +49,7 @@
                                             <input type="text" name="longitud" id="input-longitud" class="form-control{{ $errors->has('longitud') ? ' is-invalid' : '' }}" placeholder="{{ __('Longitud') }}" value="{{ old('longitud') }}" required>
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mapModal">
-                                                    <i class="nc-icon nc-pin-3"></i> <!-- Icono de mapa -->
+                                                    <i class="nc-icon nc-pin-3"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -61,12 +61,12 @@
                                             <option value="Entrada" {{ old('Tipo') == 'Entrada' ? 'selected' : '' }}>Entrada</option>
                                             <option value="Salida" {{ old('Tipo') == 'Salida' ? 'selected' : '' }}>Salida</option>
                                             <option value="Entrada Comida" {{ old('Tipo') == 'Entrada comida' ? 'selected' : '' }}>Entrada comida</option>
-                                            <option value="Salida comida" {{ old('Tipo') == 'Salida comida' ? 'selected' : '' }}>Salida comida</option>
+                                            <option value="Salida Comida" {{ old('Tipo') == 'Salida comida' ? 'selected' : '' }}>Salida comida</option>
                                         </select>
                                         @include('alerts.feedback', ['field' => 'Tipo'])
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-success mt-4">{{ __(' Guardar') }}</button>
+                                        <button type="submit" class="btn btn-success mt-4">{{ __('Guardar') }}</button>
                                     </div>
                                 </div>
                             </form>
@@ -105,9 +105,9 @@
             if (!map) {
                 map = L.map('map').setView([19.36840142540269, -104.10091443763574], 13); // Inicializa en Minatitlán, Colima, México
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap contributors'
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 17,
+                    attribution: '© Esri'
                 }).addTo(map);
 
                 map.on('click', function (e) {

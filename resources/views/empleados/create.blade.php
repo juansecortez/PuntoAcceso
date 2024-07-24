@@ -68,7 +68,7 @@
                                         @include('alerts.feedback', ['field' => 'NoContrato'])
                                     </div>
                                     <div class="form-group{{ $errors->has('photo') ? ' has-danger' : '' }} d-flex flex-column">
-                                        <label class="form-control-label" for="input-photo">{{ __('Profile photo') }}</label>
+                                        <label class="form-control-label" for="input-photo">{{ __('Foto de Perfil') }}</label>
                                         <div class="fileinput fileinput-new" data-provides="fileinput">
                                             <div class="fileinput-new thumbnail">
                                                 <img src="{{ request()->photo ? request()->photo : asset('img/No Profile Picture.png') }}" alt="...">
@@ -76,7 +76,7 @@
                                             <div class="fileinput-preview fileinput-exists thumbnail"></div>
                                             <div class="custom-file">
                                                 <input type="file" name="photo" class="custom-file-input{{ $errors->has('photo') ? ' is-invalid' : '' }}" id="input-photo" accept="image/*">
-                                                <label class="custom-file-label" for="input-photo">{{ request()->photo ? request()->photo : 'Select profile picture' }}</label>
+                                                <label class="custom-file-label" for="input-photo">{{ request()->photo ? request()->photo : 'Seleccionar foto de perfil' }}</label>
                                             </div>
                                             @include('alerts.feedback', ['field' => 'photo'])
                                         </div>

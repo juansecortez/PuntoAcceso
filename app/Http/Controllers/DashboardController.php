@@ -11,8 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $years = UsoPuerta::selectRaw('YEAR(Fecha) as year')->distinct()->pluck('year');
+        $year = $request->input('year', $years->first() ?? date('Y')); // Usa el primer año disponible o el año actual como default
+    
         $contratosCount = Contrato::count();
         $empleadosCount = Empleado::count();
         $puertasEntradaCount = Puerta::where('Tipo', 'Entrada')->count();
@@ -24,6 +27,7 @@ class DashboardController extends Controller
         )
         ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
         ->where('puertas.Tipo', 'Entrada')
+        ->whereYear('Fecha', $year)
         ->groupBy(DB::raw('MONTH(Fecha)'))
         ->pluck('conteo', 'mes');
     
@@ -33,23 +37,21 @@ class DashboardController extends Controller
         )
         ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
         ->where('puertas.Tipo', 'Salida')
+        ->whereYear('Fecha', $year)
         ->groupBy(DB::raw('MONTH(Fecha)'))
         ->pluck('conteo', 'mes');
     
-        $empleadosPorContrato = Empleado::select(
-            'NoContrato',
-            DB::raw('COUNT(*) as conteo')
-        )
-        ->groupBy('NoContrato')
-        ->pluck('conteo', 'NoContrato');
+        // Calcular empleados por contrato
+        $empleadosPorContrato = Empleado::select('NoContrato', DB::raw('COUNT(*) as conteo'))
+            ->groupBy('NoContrato')
+            ->pluck('conteo', 'NoContrato');
     
-        $usoPuertasPorContrato = UsoPuerta::select(
-            'empleados.NoContrato',
-            DB::raw('COUNT(*) as conteo')
-        )
-        ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
-        ->groupBy('empleados.NoContrato')
-        ->pluck('conteo', 'empleados.NoContrato');
+        // Calcular uso de puertas por contrato
+        $usoPuertasPorContrato = UsoPuerta::select('empleados.NoContrato', DB::raw('COUNT(*) as conteo'))
+            ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+            ->whereYear('uso_puerta.Fecha', $year)
+            ->groupBy('empleados.NoContrato')
+            ->pluck('conteo', 'empleados.NoContrato');
     
         // Convertir números de meses a nombres de meses
         $meses = [
@@ -67,14 +69,9 @@ class DashboardController extends Controller
         });
     
         return view('dashboard.index', compact(
-            'contratosCount', 
-            'empleadosCount', 
-            'puertasEntradaCount', 
-            'puertasSalidaCount', 
-            'usoEntrada', 
-            'usoSalida', 
-            'empleadosPorContrato', 
-            'usoPuertasPorContrato'
+            'contratosCount', 'empleadosCount', 'puertasEntradaCount', 'puertasSalidaCount',
+            'usoEntrada', 'usoSalida', 'empleadosPorContrato', 'usoPuertasPorContrato', 'year', 'years'
         ));
     }
+    
 }

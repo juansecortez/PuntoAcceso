@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => __('User Management'),
+    'title' => __('Administración de usuarios'),
     'class' => '',
     'folderActive' => 'laravel-examples',
     'elementActive' => 'user'
@@ -14,7 +14,7 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h3 class="mb-0">{{ __('Users') }}</h3>
+                                    <h3 class="mb-0">{{ __('Usuarios') }}</h3>
                                     <p class="text-sm mb-0">
                                         {{ __('') }}
                                     </p>

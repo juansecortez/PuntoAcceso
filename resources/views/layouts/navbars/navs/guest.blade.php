@@ -18,11 +18,7 @@
         <div class="collapse navbar-collapse justify-content-end" id="navigation">
             <ul class="navbar-nav">
             
-                <li class="nav-item ">
-                    <a href="{{ route('register') }}" class="nav-link">
-                    <i class="nc-icon nc-book-bookmark"></i>{{ __('Registro') }}
-                    </a>
-                </li>
+            
                 <li class="nav-item  active ">
                     <a href="{{ route('login') }}" class="nav-link">
                     <i class="nc-icon nc-tap-01"></i>{{ __('Iniciar sesión') }}

@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => __('User Profile'),
+    'title' => __('Perfil de Usuario'),
     'navClass' => 'bg-default',
     'class' => '',
     'folderActive' => 'laravel-examples',
@@ -41,14 +41,10 @@
                         </div>
                         <p class="description text-center">
                             {{ __('Soy usuario tipo') }}
-                      <br>  {{ __(auth()->user()->role->name) }}
-
+                            <br>  {{ __(auth()->user()->role->name) }}
                         </p>
                     </div>
-                    
-                    
                 </div>
-          
             </div>
             <div class="col-md-8 text-center" id="profile-tour">
                 @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
@@ -61,10 +57,10 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Name') }}</label>
+                                <label class="col-md-3 col-form-label">{{ __('Nombre') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" name="name" class="form-control" placeholder="Name" value="{{ auth()->user()->name }}" required>
+                                        <input type="text" name="name" class="form-control" placeholder="Nombre" value="{{ auth()->user()->name }}" required>
                                     </div>
                                     @if ($errors->has('name'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -74,10 +70,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Email') }}</label>
+                                <label class="col-md-3 col-form-label">{{ __('Correo Electrónico') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="email" name="email" class="form-control" placeholder="Email" value="{{ auth()->user()->email }}" required>
+                                        <input type="email" name="email" class="form-control" placeholder="Correo Electrónico" value="{{ auth()->user()->email }}" required>
                                     </div>
                                     @if ($errors->has('email'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -94,17 +90,17 @@
                                 <div>
                                     <span class="btn btn-raised btn-round btn-default btn-file">
                                         <span class="fileinput-new">{{ __('Agregar Foto') }}</span>
-                                    <span class="fileinput-exists">{{ __('Change') }}</span>
-                                    <input type="file" name="photo" /></span>
+                                        <span class="fileinput-exists">{{ __('Cambiar') }}</span>
+                                        <input type="file" name="photo" /></span>
                                     <br />
-                                    <a href="#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i>{{ __('Remove') }}</a>
+                                    <a href="#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i>{{ __('Eliminar') }}</a>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer ">
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __(' guardar cambios') }}</button>
+                                    <button type="submit" class="btn btn-info btn-round">{{ __('Guardar cambios') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -119,10 +115,10 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Old Password') }}</label>
+                                <label class="col-md-3 col-form-label">{{ __('Contraseña Anterior') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="password" name="old_password" class="form-control" placeholder="Old password" required>
+                                        <input type="password" name="old_password" class="form-control" placeholder="Contraseña Anterior" required>
                                     </div>
                                     @if ($errors->has('old_password'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -132,10 +128,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('New Password') }}</label>
+                                <label class="col-md-3 col-form-label">{{ __('Nueva Contraseña') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                                        <input type="password" name="password" class="form-control" placeholder="Nueva Contraseña" required>
                                     </div>
                                     @if ($errors->has('password'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -145,10 +141,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <label class="col-md-3 col-form-label">{{ __('Password Confirmation') }}</label>
+                                <label class="col-md-3 col-form-label">{{ __('Confirmar Nueva Contraseña') }}</label>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="password" name="password_confirmation" class="form-control" placeholder="Password Confirmation" required>
+                                        <input type="password" name="password_confirmation" class="form-control" placeholder="Confirmar Nueva Contraseña" required>
                                     </div>
                                     @if ($errors->has('password_confirmation'))
                                         <span class="invalid-feedback" style="display: block;" role="alert">
@@ -161,7 +157,7 @@
                         <div class="card-footer ">
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-info btn-round">{{ __(' guardar cambios') }}</button>
+                                    <button type="submit" class="btn btn-info btn-round">{{ __('Guardar cambios') }}</button>
                                 </div>
                             </div>
                         </div>

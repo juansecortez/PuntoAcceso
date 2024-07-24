@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => __('Administracion de Empleado'),
+    'title' => __('Administración de Empleado'),
     'class' => '',
     'folderActive' => 'laravel-examples',
     'elementActive' => 'employee'
@@ -14,10 +14,10 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h3 class="mb-0">{{ __('Administracion de Empleado') }}</h3>
+                                    <h3 class="mb-0">{{ __('Administración de Empleado') }}</h3>
                                 </div>
                                 <div class="col-4 text-right">
-                                    <a href="{{ route('empleado.index') }}" class="btn btn-sm btn-primary">{{ __('Regresar a la lista ') }}</a>
+                                    <a href="{{ route('empleado.index') }}" class="btn btn-sm btn-primary">{{ __('Regresar a la lista') }}</a>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                         @include('alerts.feedback', ['field' => 'NoContrato'])
                                     </div>
                                     <div class="form-group{{ $errors->has('photo') ? ' has-danger' : '' }} d-flex flex-column">
-                                        <label class="form-control-label" for="input-photo">{{ __('Profile photo') }}</label>
+                                        <label class="form-control-label" for="input-photo">{{ __('Foto de Perfil') }}</label>
                                         <div class="fileinput fileinput-new" data-provides="fileinput">
                                             <div class="fileinput-new thumbnail">
                                                 <img src="{{ $empleado->profilePicture() }}" alt="...">

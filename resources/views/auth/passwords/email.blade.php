@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'class' => 'login-page',
+    'class' => 'pagina-login',
     'backgroundImagePath' => 'img/bg/fabio-mangione.png'
 ])
 
@@ -8,9 +8,9 @@
         <div class="container">
             <div class="col-lg-4 col-md-6 ml-auto mr-auto">
                 <div class="card card-login">
-                    <div class="card-body ">
-                        <div class="card-header ">
-                            <h3 class="header text-center">{{ __('Reset Password') }}</h3>
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h3 class="header text-center">{{ __('Restablecer Contraseña') }}</h3>
                         </div>
 
                         @if (session('status'))
@@ -38,7 +38,7 @@
                                 @endif
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-warning btn-round mb-3">{{ __('Send Password Reset Link') }}</button>
+                                <button type="submit" class="btn btn-warning btn-round mb-3">{{ __('Enviar Enlace ') }}</button>
                             </div>
                         </form>
                     </div>

@@ -83,13 +83,17 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var map = L.map('map').setView([19.3756, -103.5783], 13);
+            // Configura el mapa para que inicie centrado en Minatitlán, Colima, México.
+            // Las coordenadas [19.3737, -104.0135] corresponden aproximadamente al centro de Minatitlán.
+            var map = L.map('map').setView([19.3737, -104.0135], 15);
 
+            // Esta es la capa de mapa básico de OpenStreetMap.
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
+            // Aquí se agregan los marcadores para las checadas
             @foreach($usoPuertas as $usoPuerta)
                 L.marker([{{ $usoPuerta->latitude }}, {{ $usoPuerta->longitud }}])
                     .addTo(map)
@@ -103,3 +107,5 @@
         });
     </script>
 @endpush
+
+

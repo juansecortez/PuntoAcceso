@@ -112,11 +112,28 @@
                 </div>
             </div>
         </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <form method="get" action="{{ route('home') }}" style="display: inline-block;">
+                    <div class="form-group" style="display: flex; align-items: center;">
+                        <label for="year" style="margin-right: 10px;">{{ __('Año') }}</label>
+                        <select name="year" id="year" class="form-control" style="width: auto;">
+                            @foreach($years as $y)
+                                <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm" style="margin-left: 10px;">{{ __('Filtrar') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-6 col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Uso de Puertas de Entrada por Mes</h5>
+                        <h5 class="card-title">Uso de Puertas de Entrada por Mes ({{ $year }})</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="usoEntradaChart"></canvas>
@@ -126,7 +143,7 @@
             <div class="col-lg-6 col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Uso de Puertas de Salida por Mes</h5>
+                        <h5 class="card-title">Uso de Puertas de Salida por Mes ({{ $year }})</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="usoSalidaChart"></canvas>
@@ -307,6 +324,4 @@
         });
     });
 </script>
-
-
 @endpush

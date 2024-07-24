@@ -16,26 +16,38 @@
                         <div class="card-body">
                             <form method="get" action="{{ route('uso_puerta.index') }}">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="FechaInicio">{{ __('Fecha de Inicio') }}</label>
                                             <input type="date" name="FechaInicio" id="FechaInicio" class="form-control" value="{{ request('FechaInicio', $fechaInicio) }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="FechaFin">{{ __('Fecha de Fin') }}</label>
                                             <input type="date" name="FechaFin" id="FechaFin" class="form-control" value="{{ request('FechaFin', $fechaFin) }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Contrato">{{ __('Contrato') }}</label>
                                             <select name="Contrato" id="Contrato" class="form-control">
                                                 <option value="">{{ __('Seleccione un contrato') }}</option>
                                                 @foreach($contratos as $contrato)
                                                     <option value="{{ $contrato->NoContrato }}" {{ request('Contrato') == $contrato->NoContrato ? 'selected' : '' }}>
-                                                        {{ $contrato->NoContrato }} - {{ $contrato->NombreContrato }}
+                                                        {{ $contrato->NoContrato }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Empleado">{{ __('Empleado') }}</label>
+                                            <select name="Empleado[]" id="Empleado" class="form-control" multiple="multiple">
+                                                @foreach($empleados as $empleado)
+                                                    <option value="{{ $empleado->id }}" {{ in_array($empleado->id, request('Empleado', [])) ? 'selected' : '' }}>
+                                                        {{ $empleado->Nombre . ' ' . $empleado->ApellidoP . ' ' . $empleado->ApellidoM }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -48,6 +60,9 @@
                                 <input type="hidden" name="FechaInicio" value="{{ request('FechaInicio', $fechaInicio) }}">
                                 <input type="hidden" name="FechaFin" value="{{ request('FechaFin', $fechaFin) }}">
                                 <input type="hidden" name="Contrato" value="{{ request('Contrato') }}">
+                                @foreach(request('Empleado', []) as $empleado)
+                                    <input type="hidden" name="Empleado[]" value="{{ $empleado }}">
+                                @endforeach
                                 <button type="submit" class="btn btn-success">
                                     <i class="fa fa-file-excel-o"></i> {{ __('Exportar a Excel') }}
                                 </button>
@@ -161,7 +176,16 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script>
+        $(document).ready(function() {
+            $('#Empleado').select2({
+                placeholder: "{{ __('Seleccione empleados') }}",
+                allowClear: true
+            });
+        });
+
         function showMap(latitude, longitude) {
             $('#mapModal').on('shown.bs.modal', function () {
                 var map = L.map('map').setView([latitude, longitude], 13);

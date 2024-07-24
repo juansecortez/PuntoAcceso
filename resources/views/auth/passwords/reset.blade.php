@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'class' => 'register-page'
+    'class' => 'pagina-registro'
 ])
 
 @section('content')
@@ -7,15 +7,15 @@
         <div class="container">
             <div class="col-lg-4 col-md-6 ml-auto mr-auto">
                 <div class="card card-login">
-                    <div class="card-body ">
+                    <div class="card-body">
                         <form class="form" method="POST" action="{{ route('password.update') }}">
 
                             @csrf
 
                             <input type="hidden" name="token" value="{{ $token }}">
 
-                            <div class="card-header ">
-                                <h3 class="header text-center">{{ __('Reset Password') }}</h3>
+                            <div class="card-header">
+                                <h3 class="header text-center">{{ __('Restablecer Contraseña') }}</h3>
                             </div>
                             <div class="form-group{{ $errors->has('email') ? ' has-danger' : '' }} mb-3">
                                 <div class="input-group input-group-alternative">
@@ -36,7 +36,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="nc-icon nc-key-25"></i></span>
                                     </div>
-                                    <input class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" placeholder="{{ __('Password') }}" type="password" value="{{ old('password') }}" required>
+                                    <input class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" placeholder="{{ __('Contraseña') }}" type="password" value="{{ old('password') }}" required>
                                 </div>
                                 @if ($errors->has('password'))
                                     <span class="invalid-feedback" style="display: block;" role="alert">
@@ -50,12 +50,12 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="nc-icon nc-key-25"></i></span>
                                     </div>
-                                    <input class="form-control" name="password_confirmation" placeholder="{{ __('Password Confirmation') }}" type="password" value="{{ old('password_confirmation') }}" required>
+                                    <input class="form-control" name="password_confirmation" placeholder="{{ __('Confirmación de Contraseña') }}" type="password" value="{{ old('password_confirmation') }}" required>
                                 </div>
                             </div>
 
                             <div class="text-center">
-                                <button type="submit" class="btn btn-warning btn-round mb-3">{{ __('Reset Password') }}</button>
+                                <button type="submit" class="btn btn-warning btn-round mb-3">{{ __('Restablecer Contraseña') }}</button>
                             </div>
                         </form>
                     </div>

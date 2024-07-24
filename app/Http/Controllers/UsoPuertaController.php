@@ -106,6 +106,7 @@ public function assignSelectedPuertasToAll(Request $request)
 public function index(Request $request)
 {
     $contratos = Contrato::all();
+    $empleados = Empleado::all(); // Obtener todos los empleados
 
     // Define las fechas predeterminadas
     $defaultFechaInicio = Carbon::now()->subDay()->startOfDay()->toDateString();
@@ -126,10 +127,25 @@ public function index(Request $request)
         });
     }
 
-    $usoPuertas = $query->paginate(60);
+    if ($request->filled('Empleado')) {
+        $empleadosFiltro = $request->Empleado;
+        $query->whereHas('empleado', function ($q) use ($empleadosFiltro) {
+            $q->whereIn('id', $empleadosFiltro);
+        });
+    }
 
-    return view('uso_puerta.index', compact('contratos', 'usoPuertas', 'fechaInicio', 'fechaFin'));
+    // Ordenar por nombre del empleado y fecha de uso de puerta
+    $query->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+          ->orderBy('empleados.Nombre')
+          ->orderBy('uso_puerta.Fecha', 'asc');
+
+    $usoPuertas = $query->select('uso_puerta.*')->paginate(60);
+
+    return view('uso_puerta.index', compact('contratos', 'empleados', 'usoPuertas', 'fechaInicio', 'fechaFin'));
 }
+
+
+
 
 public function mapaChecadas(Request $request)
 {
