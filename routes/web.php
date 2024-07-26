@@ -37,6 +37,8 @@ Route::get('mapa_checadas', 'UsoPuertaController@mapaChecadas')->name('mapa_chec
 Route::get('uso_puerta', 'UsoPuertaController@index')->name('uso_puerta.index');
 Route::get('uso_puerta/export', [UsoPuertaController::class, 'export'])->name('uso_puerta.export');
 
+Route::get('uso_puerta/export-pdf', [UsoPuertaController::class, 'exportPdf'])->name('uso_puerta.exportPdf');
+
 Route::group(['middleware' => 'guest'], function() {
     Route::get('pricing', 'PageController@pricing')->name('page.pricing');
     Route::get('lock', 'PageController@lock')->name('page.lock');

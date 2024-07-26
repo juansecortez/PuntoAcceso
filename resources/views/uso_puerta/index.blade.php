@@ -11,7 +11,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="mb-0">{{ __('Filtro de Uso de Puertas') }}</h3>
+                            <h3 class="mb-0">{{ __('Consulta de asistencias') }}</h3>
                         </div>
                         <div class="card-body">
                             <form method="get" action="{{ route('uso_puerta.index') }}">
@@ -54,18 +54,37 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">{{ __('Filtrar') }}</button>
-                            </form>
-                            <form method="get" action="{{ route('uso_puerta.export') }}" style="margin-top: 10px;">
-                                <input type="hidden" name="FechaInicio" value="{{ request('FechaInicio', $fechaInicio) }}">
-                                <input type="hidden" name="FechaFin" value="{{ request('FechaFin', $fechaFin) }}">
-                                <input type="hidden" name="Contrato" value="{{ request('Contrato') }}">
-                                @foreach(request('Empleado', []) as $empleado)
-                                    <input type="hidden" name="Empleado[]" value="{{ $empleado }}">
-                                @endforeach
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fa fa-file-excel-o"></i> {{ __('Exportar a Excel') }}
-                                </button>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary w-100">{{ __('Filtrar') }}</button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <form method="get" action="{{ route('uso_puerta.export') }}">
+                                            <input type="hidden" name="FechaInicio" value="{{ request('FechaInicio', $fechaInicio) }}">
+                                            <input type="hidden" name="FechaFin" value="{{ request('FechaFin', $fechaFin) }}">
+                                            <input type="hidden" name="Contrato" value="{{ request('Contrato') }}">
+                                            @foreach(request('Empleado', []) as $empleado)
+                                                <input type="hidden" name="Empleado[]" value="{{ $empleado }}">
+                                            @endforeach
+                                            <button type="submit" class="btn btn-success w-100 mt-2">
+                                                <i class="fa fa-file-excel-o"></i> {{ __('Exportar a Excel') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <form method="get" action="{{ route('uso_puerta.exportPdf') }}">
+                                            <input type="hidden" name="FechaInicio" value="{{ request('FechaInicio', $fechaInicio) }}">
+                                            <input type="hidden" name="FechaFin" value="{{ request('FechaFin', $fechaFin) }}">
+                                            <input type="hidden" name="Contrato" value="{{ request('Contrato') }}">
+                                            @foreach(request('Empleado', []) as $empleado)
+                                                <input type="hidden" name="Empleado[]" value="{{ $empleado }}">
+                                            @endforeach
+                                            <button type="submit" class="btn btn-danger w-100 mt-2">
+                                                <i class="fa fa-file-pdf-o"></i> {{ __('Exportar a PDF') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

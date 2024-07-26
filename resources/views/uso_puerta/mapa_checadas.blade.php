@@ -11,7 +11,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="mb-0">{{ __('Filtro de Checadas') }}</h3>
+                            <h3 class="mb-0">{{ __('Mapa de asistencias') }}</h3>
                         </div>
                         <div class="card-body">
                             <form method="get" action="{{ route('mapa_checadas') }}">
@@ -87,10 +87,10 @@
             // Las coordenadas [19.3737, -104.0135] corresponden aproximadamente al centro de Minatitlán.
             var map = L.map('map').setView([19.3737, -104.0135], 15);
 
-            // Esta es la capa de mapa básico de OpenStreetMap.
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            // Esta es la capa de mapa satelital de Esri World Imagery.
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
+                attribution: 'Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
             }).addTo(map);
 
             // Aquí se agregan los marcadores para las checadas
@@ -107,5 +107,3 @@
         });
     </script>
 @endpush
-
-

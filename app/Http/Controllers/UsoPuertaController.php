@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use App\Exports\UsoPuertaExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use PDF;
+use Illuminate\Support\Facades\Auth;
+
 class UsoPuertaController extends Controller
 {
     public function assignPuertaToEmpleado($empleadoId)
@@ -182,4 +185,50 @@ public function export(Request $request)
 
     return Excel::download(new UsoPuertaExport($fechaInicio, $fechaFin, $contrato), 'uso_puertas.xlsx');
 }
+public function exportPdf(Request $request)
+    {
+        $fechaInicio = $request->input('FechaInicio');
+        $fechaFin = $request->input('FechaFin');
+        $empleadosFiltro = $request->input('Empleado', []);
+        $usuario = Auth::user()->name;
+        $fechaConsulta = Carbon::now()->toDateTimeString();
+
+        $query = UsoPuerta::query()
+            ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+            ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
+            ->whereIn('puertas.Tipo', ['Entrada', 'Salida']);
+
+        if ($fechaInicio) {
+            $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
+        }
+
+        if ($fechaFin) {
+            $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
+        }
+
+        if (!empty($empleadosFiltro)) {
+            $query->whereIn('empleados.id', $empleadosFiltro);
+        }
+
+        $usoPuertas = $query->select(
+            'empleados.Nombre',
+            'empleados.ApellidoP',
+            'empleados.ApellidoM',
+            'puertas.NombrePuerta',
+            'puertas.Tipo',
+            'uso_puerta.Fecha',
+            'uso_puerta.latitude',
+            'uso_puerta.longitud',
+            'uso_puerta.img'
+        )
+        ->orderBy('empleados.Nombre')
+        ->orderBy('uso_puerta.Fecha', 'asc')
+        ->get()
+        ->groupBy(function($item) {
+            return $item->Nombre . ' ' . $item->ApellidoP . ' ' . $item->ApellidoM;
+        });
+
+        $pdf = PDF::loadView('uso_puerta.pdf', compact('usoPuertas', 'fechaInicio', 'fechaFin', 'usuario', 'fechaConsulta'));
+        return $pdf->download('uso_puertas.pdf');
+    }
 }

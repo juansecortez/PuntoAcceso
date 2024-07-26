@@ -52,19 +52,22 @@
         </div>
         <ul class="nav">
             <li class="{{ $elementActive == 'dashboard' ? 'active' : '' }}">
+                @if (Auth::user()->role_id <= 2)
                 <a href="{{ route('home') }}">
                     <i class="nc-icon nc-world-2"></i>
                     <p>{{ __('Dashboard') }}</p>
                 </a>
+                @endif
                 <a href="{{ route('uso_puerta.index') }}">
                     <i class="nc-icon nc-chart-bar-32"></i>
-                    <p>{{ __('Reporte de checadas') }}</p>
+                    <p>{{ __('Consulta de asistencias') }}</p>
                 </a>
                 <a href="{{ route('mapa_checadas') }}">
                     <i class="nc-icon nc-map-big"></i>
-                    <p>{{ __('Mapa de checadas') }}</p>
+                    <p>{{ __('Mapa de asistencias') }}</p>
                 </a>
             </li>
+            @if (Auth::user()->role_id <= 2)
             <li class="{{ $folderActive == 'laravel-examples' ? 'active' : '' }}">
                 <a data-toggle="collapse" aria-expanded="true" href="#laravelExamples">
                 <i class="nc-icon nc-briefcase-24"></i>
@@ -81,14 +84,7 @@
                                 <span class="sidebar-normal">{{ __(' Mi Perfil ') }}</span>
                             </a>
                         </li>
-                        @if (Auth::user()->role_id == 1)
-                            <li class="{{ $elementActive == 'role' ? 'active' : '' }}">
-                                <a href="{{ route('page.index', 'role') }}">
-                                    <span class="sidebar-mini-icon">{{ __('R') }}</span>
-                                    <span class="sidebar-normal">{{ __(' Administración de Roles ') }}</span>
-                                </a>
-                            </li>
-                        @endif
+                    
                         @if (Auth::user()->role_id == 1)
                             <li class="{{ $elementActive == 'user' ? 'active' : '' }}">
                                 <a href="{{ route('page.index', 'user') }}">
@@ -122,7 +118,7 @@
                     </ul>
                 </div>
             </li>
-           
+            @endif
        </ul>
     </div>
 </div>
