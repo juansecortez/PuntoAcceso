@@ -1,5 +1,7 @@
 <?php
 
+// app/Empleado.php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +22,8 @@ class Empleado extends Model
         'Correo',
         'NoContrato',
         'photo',
+        'FechaInicioContrato',
+        'FechaNacimiento',
     ];
 
     public function profilePicture()
@@ -41,8 +45,9 @@ class Empleado extends Model
     {
         return $this->belongsTo(Contrato::class, 'NoContrato', 'NoContrato');
     }
+
     public function usoPuertas()
-{
-    return $this->hasMany(UsoPuerta::class, 'IdEmpleado');
-}
+    {
+        return $this->hasMany(UsoPuerta::class, 'IdEmpleado');
+    }
 }

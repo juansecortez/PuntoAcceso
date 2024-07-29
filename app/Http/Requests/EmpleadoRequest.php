@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,6 +23,9 @@ class EmpleadoRequest extends FormRequest
             'Correo' => 'required|email|max:255',
             'NoContrato' => 'required|string|max:255',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'FechaInicioContrato' => 'required|date', // nueva regla
+            'FechaNacimiento' => 'required|date', // nueva regla
         ];
     }
 }
+

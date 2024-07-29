@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Contrato; 
 
+use App\Imports\EmpleadosImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
 class EmpleadoController extends Controller
 {
     public function __construct()
@@ -50,19 +55,21 @@ class EmpleadoController extends Controller
     public function store(EmpleadoRequest $request)
     {
         $this->authorize('create', Empleado::class);
-
+    
         $data = $request->all();
-
+    
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('profiles', 'public');
         } else {
             $data['photo'] = null;
         }
-
+    
         Empleado::create($data);
-
+    
         return redirect()->route('empleado.index')->withStatus(__('Empleado successfully created.'));
     }
+    
+   
     /**
      * Show the form for editing the specified empleado.
      *
@@ -114,5 +121,28 @@ class EmpleadoController extends Controller
         $empleado->delete();
 
         return redirect()->route('empleado.index')->withStatus(__('Empleado successfully deleted.'));
+    }
+    
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excelFile' => 'required|mimes:xlsx'
+        ]);
+
+        try {
+            Excel::import(new EmpleadosImport, $request->file('excelFile'));
+            return redirect()->route('empleado.index')->withStatus(__('Empleados importados con éxito.'));
+        } catch (\Exception $e) {
+            return redirect()->route('empleado.index')->withErrors(__('Error al importar empleados: ' . $e->getMessage()));
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+
+        return response()->download(public_path('templates/empleados_template.xlsx'), 'empleados_template.xlsx', $headers);
     }
 }

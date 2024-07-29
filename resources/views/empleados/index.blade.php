@@ -15,11 +15,11 @@
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h3 class="mb-0">{{ __('Empleados') }}</h3>
-                                  
                                 </div>
                                 @can('create', App\Empleado::class)
                                     <div class="col-4 text-right">
                                         <a href="{{ route('empleado.create') }}" class="btn btn-sm btn-primary">{{ __('Agregar empleado') }}</a>
+                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#importModal">{{ __('Importar empleados') }}</button>
                                     </div>
                                 @endcan
                             </div>
@@ -98,4 +98,53 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para la importación de empleados -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importModalLabel">{{ __('Importar empleados') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('Cerrar') }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{{ route('empleado.import') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="excelFile">{{ __('Selecciona el archivo Excel') }}</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="excelFile" name="excelFile" required>
+                                <label class="custom-file-label" for="excelFile">{{ __('Elige archivo') }}</label>
+                            </div>
+                        </div>
+                        <div class="form-group mt-3">
+                            <a href="{{ route('empleado.template') }}" class="btn btn-sm btn-primary">{{ __('Descargar plantilla') }}</a>
+                        </div>
+                        <div class="form-group">
+                            <p>{{ __('Instrucciones para importar empleados:') }}</p>
+                            <ul>
+                                <li>{{ __('Descargue la plantilla de Excel.') }}</li>
+                                <li>{{ __('Complete la plantilla con la información de los empleados.') }}</li>
+                                <li>{{ __('Asegúrese de no modificar los encabezados de las columnas.') }}</li>
+                                <li>{{ __('Guarde el archivo Excel una vez completado.') }}</li>
+                                <li>{{ __('Seleccione el archivo Excel y haga clic en Importar.') }}</li>
+                            </ul>
+                        </div>
+                        <button type="submit" class="btn btn-primary">{{ __('Importar') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar el nombre del archivo seleccionado
+        document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+            var fileName = document.getElementById("excelFile").files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName;
+        });
+    </script>
 @endsection

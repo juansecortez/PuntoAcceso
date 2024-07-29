@@ -13,6 +13,7 @@
 
 use App\Http\Controllers\UsoPuertaController;
 use App\Http\Controllers\OrganizacionController;
+use App\Http\Controllers\EmpleadoController;
 Route::get('/', function () {
     return redirect('login');
 });
@@ -48,6 +49,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('organizacion', [OrganizacionController::class, 'edit'])->name('organizacion.edit')->middleware('can:update,App\Organization');
     Route::put('organizacion', [OrganizacionController::class, 'update'])->name('organizacion.update')->middleware('can:update,App\Organization');
 });
+
+// routes/web.php
+
+Route::post('empleado/import', 'EmpleadoController@import')->name('empleado.import');
+Route::get('empleado/template', 'EmpleadoController@downloadTemplate')->name('empleado.template');
 
 
 

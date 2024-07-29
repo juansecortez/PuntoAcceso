@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contrato;
+use App\Empleado;
 use App\Http\Requests\ContratoRequest;
 use Illuminate\Http\Request;
 
@@ -78,11 +79,21 @@ class ContratoController extends Controller
     public function update(ContratoRequest $request, Contrato $contrato)
     {
         $this->authorize('update', $contrato);
-
+    
         $data = $request->all();
-
+        
+        // Guardar el valor anterior del contrato
+        $oldNoContrato = $contrato->NoContrato;
+        
+        // Actualizar el contrato
         $contrato->update($data);
-
+        
+        // Si el número de contrato cambió, actualizar los empleados asociados
+        if ($oldNoContrato != $data['NoContrato']) {
+            Empleado::where('NoContrato', $oldNoContrato)
+                    ->update(['NoContrato' => $data['NoContrato']]);
+        }
+    
         return redirect()->route('contrato.index')->withStatus(__('Contrato successfully updated.'));
     }
 

@@ -27,6 +27,7 @@
 
                                 <h6 class="heading-small text-muted mb-4">{{ __('Información del Empleado') }}</h6>
                                 <div class="pl-lg-4">
+                                    <!-- Campos existentes -->
                                     <div class="form-group{{ $errors->has('Nombre') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-nombre">{{ __('Nombre') }}</label>
                                         <input type="text" name="Nombre" id="input-nombre" class="form-control{{ $errors->has('Nombre') ? ' is-invalid' : '' }}" placeholder="{{ __('Nombre') }}" value="{{ old('Nombre') }}" required autofocus>
@@ -71,16 +72,29 @@
                                         <label class="form-control-label" for="input-photo">{{ __('Foto de Perfil') }}</label>
                                         <div class="fileinput fileinput-new" data-provides="fileinput">
                                             <div class="fileinput-new thumbnail">
-                                                <img src="{{ request()->photo ? request()->photo : asset('img/No Profile Picture.png') }}" alt="...">
+                                                <img src="{{ asset('img/No Profile Picture.png') }}" alt="...">
                                             </div>
                                             <div class="fileinput-preview fileinput-exists thumbnail"></div>
                                             <div class="custom-file">
                                                 <input type="file" name="photo" class="custom-file-input{{ $errors->has('photo') ? ' is-invalid' : '' }}" id="input-photo" accept="image/*">
-                                                <label class="custom-file-label" for="input-photo">{{ request()->photo ? request()->photo : 'Seleccionar foto de perfil' }}</label>
+                                                <label class="custom-file-label" for="input-photo">{{ __('Seleccionar foto de perfil') }}</label>
                                             </div>
                                             @include('alerts.feedback', ['field' => 'photo'])
                                         </div>
                                     </div>
+
+                                    <!-- Nuevos campos -->
+                                    <div class="form-group{{ $errors->has('FechaInicioContrato') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="input-fecha-inicio">{{ __('Fecha de Inicio del Contrato') }}</label>
+                                        <input type="date" name="FechaInicioContrato" id="input-fecha-inicio" class="form-control{{ $errors->has('FechaInicioContrato') ? ' is-invalid' : '' }}" value="{{ old('FechaInicioContrato') }}" required>
+                                        @include('alerts.feedback', ['field' => 'FechaInicioContrato'])
+                                    </div>
+                                    <div class="form-group{{ $errors->has('FechaNacimiento') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="input-fecha-nacimiento">{{ __('Fecha de Nacimiento') }}</label>
+                                        <input type="date" name="FechaNacimiento" id="input-fecha-nacimiento" class="form-control{{ $errors->has('FechaNacimiento') ? ' is-invalid' : '' }}" value="{{ old('FechaNacimiento') }}" required>
+                                        @include('alerts.feedback', ['field' => 'FechaNacimiento'])
+                                    </div>
+
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-success mt-4">{{ __('Guardar') }}</button>
                                     </div>

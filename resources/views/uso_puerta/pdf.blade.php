@@ -15,18 +15,13 @@
             border-bottom: 2px solid #000;
             padding-bottom: 10px;
         }
-        .header p {
-            text-align: left;
-            margin: 0 50px;
-        }
-        .container {
-            margin: 20px 50px;
-        }
+      
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             font-size: 10px;
+      
         }
         th, td {
             border: 1px solid #ddd;
@@ -37,8 +32,8 @@
             background-color: #f2f2f2;
         }
         .employee-section {
-            margin-bottom: 30px;
-            page-break-inside: avoid;
+            margin-bottom: 20px;
+          
         }
         .employee-name {
             font-size: 16px;
@@ -52,6 +47,7 @@
             background-color: #ddd;
             padding: 5px;
             font-weight: bold;
+            page-break-inside: avoid;
         }
         .link {
             color: #3490dc;
@@ -90,15 +86,15 @@
         @foreach($usoPuertas as $empleado => $registros)
             <div class="employee-section">
                 <div class="employee-name">NOMBRE: {{ $empleado }}</div>
-                @php
-                    $currentDate = '';
-                @endphp
+                @php $currentDate = ''; @endphp
                 @foreach($registros as $registro)
-                    @if($currentDate != Carbon\Carbon::parse($registro->Fecha)->toDateString())
-                        @if($currentDate != '')
-                            </table>
+                    @if($currentDate != \Carbon\Carbon::parse($registro->Fecha)->toDateString())
+                        @if($currentDate != '') 
+                            </tbody>
+                        </table>
                         @endif
-                        <div class="date-section">FECHA: {{ Carbon\Carbon::parse($registro->Fecha)->toDateString() }}</div>
+                        @php $currentDate = \Carbon\Carbon::parse($registro->Fecha)->toDateString(); @endphp
+                        <div class="date-section">FECHA: {{ $currentDate }}</div>
                         <table>
                             <thead>
                                 <tr>
@@ -110,20 +106,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                    @php
-                        $currentDate = Carbon\Carbon::parse($registro->Fecha)->toDateString();
-                    @endphp
                     @endif
-                                <tr>
-                                    <td>{{ $registro->NombrePuerta }}</td>
-                                    <td>{{ $registro->Tipo }}</td>
-                                    <td>{{ $registro->Fecha }}</td>
-                                    <td><a href="{{ asset('https://pactral.com/PuntoAcceso/public/' . $registro->img) }}" class="link" target="_blank">Ver imagen</a></td>
-                                    <td><a href="https://www.google.com/maps/search/?api=1&query={{ $registro->latitude }},{{ $registro->longitud }}" class="link" target="_blank">Ver mapa</a></td>
-                                </tr>
+                    <tr>
+                        <td>{{ $registro->NombrePuerta }}</td>
+                        <td>{{ $registro->Tipo }}</td>
+                        <td>{{ $registro->Fecha }}</td>
+                        <td><a href="{{ asset('https://pactral.com/PuntoAcceso/public/' . $registro->img) }}" class="link" target="_blank">Ver imagen</a></td>
+                        <td><a href="https://www.google.com/maps/search/?api=1&query={{ $registro->latitude }},{{ $registro->longitud }}" class="link" target="_blank">Ver mapa</a></td>
+                    </tr>
                 @endforeach
-                            </tbody>
-                        </table>
+                </tbody>
+                </table>
             </div>
         @endforeach
     </div>

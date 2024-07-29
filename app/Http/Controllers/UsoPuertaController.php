@@ -248,7 +248,18 @@ public function exportPdf(Request $request)
         return $item->Nombre . ' ' . $item->ApellidoP . ' ' . $item->ApellidoM;
     });
 
-    $pdf = PDF::loadView('uso_puerta.pdf', compact('usoPuertas', 'fechaInicio', 'fechaFin', 'usuario', 'fechaConsulta'));
-    return $pdf->download('uso_puertas.pdf');
+    $pdf = PDF::loadView('uso_puerta.pdf', compact('usoPuertas', 'fechaInicio', 'fechaFin', 'usuario', 'fechaConsulta'))
+        ->setPaper('a4')
+        ->setOption('margin-top', '10mm')
+        ->setOption('margin-bottom', '10mm')
+        ->setOption('margin-left', '10mm')
+        ->setOption('margin-right', '10mm');
+
+    $fileName = 'ReportAsistencias_' . Carbon::parse($fechaInicio)->format('Ymd') . '_' . Carbon::parse($fechaFin)->format('Ymd') . '.pdf';
+    
+    return $pdf->download($fileName);
 }
+
+
+
 }
