@@ -15,12 +15,14 @@ class UsoPuertaExport implements FromQuery, WithHeadings, WithMapping
     protected $fechaInicio;
     protected $fechaFin;
     protected $contrato;
+    protected $empleadosFiltro;
 
-    public function __construct($fechaInicio, $fechaFin, $contrato)
+    public function __construct($fechaInicio, $fechaFin, $contrato, $empleadosFiltro)
     {
         $this->fechaInicio = $fechaInicio;
         $this->fechaFin = $fechaFin;
         $this->contrato = $contrato;
+        $this->empleadosFiltro = $empleadosFiltro;
     }
 
     public function query()
@@ -39,6 +41,10 @@ class UsoPuertaExport implements FromQuery, WithHeadings, WithMapping
 
         if ($this->contrato) {
             $query->where('empleados.NoContrato', $this->contrato);
+        }
+
+        if (!empty($this->empleadosFiltro)) {
+            $query->whereIn('empleados.id', $this->empleadosFiltro);
         }
 
         return $query->select(
@@ -91,4 +97,3 @@ class UsoPuertaExport implements FromQuery, WithHeadings, WithMapping
         ];
     }
 }
-

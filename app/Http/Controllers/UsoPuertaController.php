@@ -106,53 +106,53 @@ public function assignSelectedPuertasToAll(Request $request)
 
     return redirect()->route('puertas.index')->with('success', 'Selected puertas assigned to all empleados successfully.');
 }
-public function index(Request $request)
-{
-    $contratos = Contrato::all();
-    $empleados = Empleado::all(); // Obtener todos los empleados
 
-    // Define las fechas predeterminadas
-    $defaultFechaInicio = Carbon::now()->subDay()->startOfDay()->toDateString();
-    $defaultFechaFin = Carbon::now()->subDay()->endOfDay()->toDateString();
+    public function index(Request $request)
+    {
+        $contratos = Contrato::all();
+        $empleados = Empleado::all();
 
-    // Usa las fechas de la solicitud o las predeterminadas
-    $fechaInicio = $request->input('FechaInicio', $defaultFechaInicio);
-    $fechaFin = $request->input('FechaFin', $defaultFechaFin);
+     
+        $fechaInicio = $request->input('FechaInicio');
+        $fechaFin = $request->input('FechaFin');
+        // Log para depuración
+        \Log::info('Fecha Inicio solicitada: ' . $request->input('FechaInicio'));
+        \Log::info('Fecha Fin solicitada: ' . $request->input('FechaFin'));
+        \Log::info('Fecha Inicio usada: ' . $fechaInicio);
+        \Log::info('Fecha Fin usada: ' . $fechaFin);
 
-    $query = UsoPuerta::query();
+        $query = UsoPuerta::query();
 
-    $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
-    $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
+        $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
+        $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
 
-    if ($request->filled('Contrato')) {
-        $query->whereHas('empleado', function ($q) use ($request) {
-            $q->where('NoContrato', $request->Contrato);
-        });
+        if ($request->filled('Contrato')) {
+            $query->whereHas('empleado', function ($q) use ($request) {
+                $q->where('NoContrato', $request->Contrato);
+            });
+        }
+
+        if ($request->filled('Empleado')) {
+            $empleadosFiltro = $request->Empleado;
+            $query->whereHas('empleado', function ($q) use ($empleadosFiltro) {
+                $q->whereIn('id', $empleadosFiltro);
+            });
+        }
+
+        $query->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+              ->orderBy('empleados.Nombre')
+              ->orderBy('uso_puerta.Fecha', 'asc');
+
+        $usoPuertas = $query->select('uso_puerta.*')->paginate(60);
+
+        return view('uso_puerta.index', compact('contratos', 'empleados', 'usoPuertas', 'fechaInicio', 'fechaFin'));
     }
-
-    if ($request->filled('Empleado')) {
-        $empleadosFiltro = $request->Empleado;
-        $query->whereHas('empleado', function ($q) use ($empleadosFiltro) {
-            $q->whereIn('id', $empleadosFiltro);
-        });
-    }
-
-    // Ordenar por nombre del empleado y fecha de uso de puerta
-    $query->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
-          ->orderBy('empleados.Nombre')
-          ->orderBy('uso_puerta.Fecha', 'asc');
-
-    $usoPuertas = $query->select('uso_puerta.*')->paginate(60);
-
-    return view('uso_puerta.index', compact('contratos', 'empleados', 'usoPuertas', 'fechaInicio', 'fechaFin'));
-}
-
-
 
 
 public function mapaChecadas(Request $request)
 {
     $contratos = Contrato::all();
+    $empleados = Empleado::all(); // Obtener todos los empleados
 
     $query = UsoPuerta::query();
 
@@ -172,63 +172,83 @@ public function mapaChecadas(Request $request)
         });
     }
 
+    if ($request->filled('Empleado')) {
+        $empleadosFiltro = $request->Empleado;
+        $query->whereHas('empleado', function ($q) use ($empleadosFiltro) {
+            $q->whereIn('id', $empleadosFiltro);
+        });
+    }
+
     $usoPuertas = $query->get();
 
-    return view('uso_puerta.mapa_checadas', compact('contratos', 'usoPuertas'));
+    return view('uso_puerta.mapa_checadas', compact('contratos', 'empleados', 'usoPuertas'));
 }
+
 
 public function export(Request $request)
 {
     $fechaInicio = $request->input('FechaInicio');
     $fechaFin = $request->input('FechaFin');
     $contrato = $request->input('Contrato');
+    $empleadosFiltro = $request->input('Empleado', []);
 
-    return Excel::download(new UsoPuertaExport($fechaInicio, $fechaFin, $contrato), 'uso_puertas.xlsx');
+    // Log para depuración
+    \Log::info('Exportar Excel - Fecha Inicio: ' . $fechaInicio);
+    \Log::info('Exportar Excel - Fecha Fin: ' . $fechaFin);
+    \Log::info('Exportar Excel - Contrato: ' . $contrato);
+    \Log::info('Exportar Excel - Empleados: ' . json_encode($empleadosFiltro));
+
+    return Excel::download(new UsoPuertaExport($fechaInicio, $fechaFin, $contrato, $empleadosFiltro), 'uso_puertas.xlsx');
 }
 public function exportPdf(Request $request)
-    {
-        $fechaInicio = $request->input('FechaInicio');
-        $fechaFin = $request->input('FechaFin');
-        $empleadosFiltro = $request->input('Empleado', []);
-        $usuario = Auth::user()->name;
-        $fechaConsulta = Carbon::now()->toDateTimeString();
+{
+    $fechaInicio = $request->input('FechaInicio');
+    $fechaFin = $request->input('FechaFin');
+    $empleadosFiltro = $request->input('Empleado', []);
+    $usuario = Auth::user()->name;
+    $fechaConsulta = Carbon::now()->toDateTimeString();
 
-        $query = UsoPuerta::query()
-            ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
-            ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
-            ->whereIn('puertas.Tipo', ['Entrada', 'Salida']);
+    // Log para depuración
+    \Log::info('Exportar PDF - Fecha Inicio: ' . $fechaInicio);
+    \Log::info('Exportar PDF - Fecha Fin: ' . $fechaFin);
+    \Log::info('Exportar PDF - Empleados: ' . json_encode($empleadosFiltro));
 
-        if ($fechaInicio) {
-            $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
-        }
+    $query = UsoPuerta::query()
+        ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+        ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
+        ->whereIn('puertas.Tipo', ['Entrada', 'Salida']);
 
-        if ($fechaFin) {
-            $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
-        }
-
-        if (!empty($empleadosFiltro)) {
-            $query->whereIn('empleados.id', $empleadosFiltro);
-        }
-
-        $usoPuertas = $query->select(
-            'empleados.Nombre',
-            'empleados.ApellidoP',
-            'empleados.ApellidoM',
-            'puertas.NombrePuerta',
-            'puertas.Tipo',
-            'uso_puerta.Fecha',
-            'uso_puerta.latitude',
-            'uso_puerta.longitud',
-            'uso_puerta.img'
-        )
-        ->orderBy('empleados.Nombre')
-        ->orderBy('uso_puerta.Fecha', 'asc')
-        ->get()
-        ->groupBy(function($item) {
-            return $item->Nombre . ' ' . $item->ApellidoP . ' ' . $item->ApellidoM;
-        });
-
-        $pdf = PDF::loadView('uso_puerta.pdf', compact('usoPuertas', 'fechaInicio', 'fechaFin', 'usuario', 'fechaConsulta'));
-        return $pdf->download('uso_puertas.pdf');
+    if ($fechaInicio) {
+        $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
     }
+
+    if ($fechaFin) {
+        $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
+    }
+
+    if (!empty($empleadosFiltro)) {
+        $query->whereIn('empleados.id', $empleadosFiltro);
+    }
+
+    $usoPuertas = $query->select(
+        'empleados.Nombre',
+        'empleados.ApellidoP',
+        'empleados.ApellidoM',
+        'puertas.NombrePuerta',
+        'puertas.Tipo',
+        'uso_puerta.Fecha',
+        'uso_puerta.latitude',
+        'uso_puerta.longitud',
+        'uso_puerta.img'
+    )
+    ->orderBy('empleados.Nombre')
+    ->orderBy('uso_puerta.Fecha', 'asc')
+    ->get()
+    ->groupBy(function($item) {
+        return $item->Nombre . ' ' . $item->ApellidoP . ' ' . $item->ApellidoM;
+    });
+
+    $pdf = PDF::loadView('uso_puerta.pdf', compact('usoPuertas', 'fechaInicio', 'fechaFin', 'usuario', 'fechaConsulta'));
+    return $pdf->download('uso_puertas.pdf');
+}
 }
