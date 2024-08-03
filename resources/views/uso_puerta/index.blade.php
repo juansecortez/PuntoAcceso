@@ -188,16 +188,24 @@
             allowClear: true
         });
 
+        // Función para exportar datos
         window.exportData = function(type) {
             var form = document.getElementById('mainForm');
+            var originalAction = form.action; // Guarda la acción original del formulario
+
             if (type === 'excel') {
                 form.action = '{{ route('uso_puerta.export') }}';
             } else if (type === 'pdf') {
                 form.action = '{{ route('uso_puerta.exportPdf') }}';
             }
+
             form.submit();
+
+            // Restablecer la acción del formulario al valor original después de enviar
+            form.action = originalAction;
         }
 
+        // Función para mostrar el mapa
         window.showMap = function(latitude, longitude) {
             $('#mapModal').on('shown.bs.modal', function () {
                 var map = L.map('map').setView([latitude, longitude], 13);
@@ -209,11 +217,13 @@
             }).modal('show');
         }
 
+        // Función para mostrar la imagen
         window.showImage = function(imageUrl) {
             document.getElementById('modal-image').src = imageUrl;
             $('#imageModal').modal('show');
         }
     });
 </script>
+
 @endpush
 @endsection

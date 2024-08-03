@@ -19,13 +19,13 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="FechaInicio">{{ __('Fecha de Inicio') }}</label>
-                                            <input type="date" name="FechaInicio" id="FechaInicio" class="form-control" value="{{ request('FechaInicio') }}">
+                                            <input type="date" name="FechaInicio" id="FechaInicio" class="form-control" value="{{ request('FechaInicio', $fechaInicio) }}">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="FechaFin">{{ __('Fecha de Fin') }}</label>
-                                            <input type="date" name="FechaFin" id="FechaFin" class="form-control" value="{{ request('FechaFin') }}">
+                                            <input type="date" name="FechaFin" id="FechaFin" class="form-control" value="{{ request('FechaFin', $fechaFin) }}">
                                         </div>
                                     </div>
                                     <div class="col-md-3">

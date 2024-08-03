@@ -37,7 +37,7 @@ Route::get('home', 'DashboardController@index')->name('home');
 Route::get('mapa_checadas', 'UsoPuertaController@mapaChecadas')->name('mapa_checadas');
 Route::get('uso_puerta', 'UsoPuertaController@index')->name('uso_puerta.index');
 Route::get('uso_puerta/export', [UsoPuertaController::class, 'export'])->name('uso_puerta.export');
-
+Route::post('/empleado/{empleado}/toggle-active', [EmpleadoController::class, 'toggleActive'])->name('empleado.toggle-active');
 Route::get('uso_puerta/export-pdf', [UsoPuertaController::class, 'exportPdf'])->name('uso_puerta.exportPdf');
 
 Route::group(['middleware' => 'guest'], function() {

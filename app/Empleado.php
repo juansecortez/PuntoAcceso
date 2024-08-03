@@ -1,7 +1,5 @@
 <?php
 
-// app/Empleado.php
-
 namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +22,8 @@ class Empleado extends Model
         'photo',
         'FechaInicioContrato',
         'FechaNacimiento',
+        'activo', // nuevo campo
+        'fecha_baja' // nuevo campo
     ];
 
     public function profilePicture()

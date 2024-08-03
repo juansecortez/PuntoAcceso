@@ -107,64 +107,75 @@ public function assignSelectedPuertasToAll(Request $request)
     return redirect()->route('puertas.index')->with('success', 'Selected puertas assigned to all empleados successfully.');
 }
 
-    public function index(Request $request)
-    {
-        $contratos = Contrato::all();
-        $empleados = Empleado::all();
+public function index(Request $request)
+{
+    $contratos = Contrato::all();
+    $empleados = Empleado::where('activo', true)->get();
 
-     
-        $fechaInicio = $request->input('FechaInicio');
-        $fechaFin = $request->input('FechaFin');
-        // Log para depuración
-        \Log::info('Fecha Inicio solicitada: ' . $request->input('FechaInicio'));
-        \Log::info('Fecha Fin solicitada: ' . $request->input('FechaFin'));
-        \Log::info('Fecha Inicio usada: ' . $fechaInicio);
-        \Log::info('Fecha Fin usada: ' . $fechaFin);
+    // Establecer fecha de hoy si no se proporcionan fechas
+    $fechaInicio = $request->input('FechaInicio', Carbon::today()->toDateString());
+    $fechaFin = $request->input('FechaFin', Carbon::today()->toDateString());
 
-        $query = UsoPuerta::query();
+    // Log para depuración
+    \Log::info('Fecha Inicio solicitada: ' . $request->input('FechaInicio'));
+    \Log::info('Fecha Fin solicitada: ' . $request->input('FechaFin'));
+    \Log::info('Fecha Inicio usada: ' . $fechaInicio);
+    \Log::info('Fecha Fin usada: ' . $fechaFin);
 
-        $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
-        $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
+    $query = UsoPuerta::query();
 
-        if ($request->filled('Contrato')) {
-            $query->whereHas('empleado', function ($q) use ($request) {
-                $q->where('NoContrato', $request->Contrato);
-            });
-        }
+    // Filtrar por fechas
+    $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
+    $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
 
-        if ($request->filled('Empleado')) {
-            $empleadosFiltro = $request->Empleado;
-            $query->whereHas('empleado', function ($q) use ($empleadosFiltro) {
-                $q->whereIn('id', $empleadosFiltro);
-            });
-        }
+    // Filtrar por empleados activos
+    $query->whereHas('empleado', function ($q) {
+        $q->where('activo', true);
+    });
 
-        $query->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
-              ->orderBy('empleados.Nombre')
-              ->orderBy('uso_puerta.Fecha', 'asc');
-
-        $usoPuertas = $query->select('uso_puerta.*')->paginate(60);
-
-        return view('uso_puerta.index', compact('contratos', 'empleados', 'usoPuertas', 'fechaInicio', 'fechaFin'));
+    if ($request->filled('Contrato')) {
+        $query->whereHas('empleado', function ($q) use ($request) {
+            $q->where('NoContrato', $request->Contrato);
+        });
     }
+
+    if ($request->filled('Empleado')) {
+        $empleadosFiltro = $request->Empleado;
+        $query->whereHas('empleado', function ($q) use ($empleadosFiltro) {
+            $q->whereIn('id', $empleadosFiltro);
+        });
+    }
+
+    $query->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+          ->orderBy('empleados.Nombre')
+          ->orderBy('uso_puerta.Fecha', 'asc');
+
+    $usoPuertas = $query->select('uso_puerta.*')->paginate(60);
+
+    return view('uso_puerta.index', compact('contratos', 'empleados', 'usoPuertas', 'fechaInicio', 'fechaFin'));
+}
+
 
 
 public function mapaChecadas(Request $request)
 {
     $contratos = Contrato::all();
-    $empleados = Empleado::all(); // Obtener todos los empleados
+    $empleados = Empleado::where('activo', true)->get();
+
+    // Establecer fechas de hoy si no se proporcionan
+    $fechaInicio = $request->input('FechaInicio', Carbon::today()->toDateString());
+    $fechaFin = $request->input('FechaFin', Carbon::today()->toDateString());
 
     $query = UsoPuerta::query();
 
-    if ($request->filled('FechaInicio')) {
-        $fechaInicio = Carbon::parse($request->FechaInicio)->startOfDay();
-        $query->where('Fecha', '>=', $fechaInicio);
-    }
+    // Filtrar por fechas
+    $query->where('Fecha', '>=', Carbon::parse($fechaInicio)->startOfDay());
+    $query->where('Fecha', '<=', Carbon::parse($fechaFin)->endOfDay());
 
-    if ($request->filled('FechaFin')) {
-        $fechaFin = Carbon::parse($request->FechaFin)->endOfDay();
-        $query->where('Fecha', '<=', $fechaFin);
-    }
+    // Filtrar por empleados activos
+    $query->whereHas('empleado', function ($q) {
+        $q->where('activo', true);
+    });
 
     if ($request->filled('Contrato')) {
         $query->whereHas('empleado', function ($q) use ($request) {
@@ -181,8 +192,10 @@ public function mapaChecadas(Request $request)
 
     $usoPuertas = $query->get();
 
-    return view('uso_puerta.mapa_checadas', compact('contratos', 'empleados', 'usoPuertas'));
+    return view('uso_puerta.mapa_checadas', compact('contratos', 'empleados', 'usoPuertas', 'fechaInicio', 'fechaFin'));
 }
+
+
 
 
 public function export(Request $request)

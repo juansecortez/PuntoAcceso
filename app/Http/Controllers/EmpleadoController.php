@@ -6,12 +6,12 @@ use App\Http\Requests\EmpleadoRequest; // Asegúrate de crear esta request
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Contrato; 
-
+use Carbon\Carbon;
 use App\Imports\EmpleadosImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Http\JsonResponse;
 class EmpleadoController extends Controller
 {
     public function __construct()
@@ -64,10 +64,15 @@ class EmpleadoController extends Controller
             $data['photo'] = null;
         }
     
+        // Si el campo 'activo' no está en la solicitud, asigna true por defecto
+        $data['activo'] = $request->input('activo', true);
+        $data['fecha_baja'] = $data['activo'] ? null : Carbon::today()->toDateString();
+    
         Empleado::create($data);
     
         return redirect()->route('empleado.index')->withStatus(__('Empleado successfully created.'));
     }
+
     
    
     /**
@@ -103,10 +108,15 @@ class EmpleadoController extends Controller
             $data['photo'] = $empleado->photo;
         }
     
+        // Actualiza el estado del empleado
+        $data['activo'] = $request->input('activo', $empleado->activo);
+        $data['fecha_baja'] = $data['activo'] ? null : Carbon::today()->toDateString();
+    
         $empleado->update($data);
     
         return redirect()->route('empleado.index')->withStatus(__('Empleado successfully updated.'));
     }
+    
 
     /**
      * Remove the specified empleado from storage.
@@ -145,4 +155,22 @@ class EmpleadoController extends Controller
 
         return response()->download(public_path('templates/empleados_template.xlsx'), 'empleados_template.xlsx', $headers);
     }
+    
+
+    public function toggleActive(Request $request, Empleado $empleado): JsonResponse
+{
+    $this->authorize('update', $empleado);
+
+    try {
+        $isActive = $request->input('activo', false);
+
+        $empleado->activo = $isActive;
+        $empleado->fecha_baja = $isActive ? null : Carbon::today()->toDateString();
+        $empleado->save();
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
 }

@@ -42,6 +42,7 @@
                                         <th scope="col">{{ __('CURP') }}</th>
                                         <th scope="col">{{ __('Teléfono') }}</th>
                                         <th scope="col">{{ __('Número de Contrato') }}</th>
+                                        <th scope="col">{{ __('Activo') }}</th>
                                         @can('manage-empleados', App\Empleado::class)
                                             <th scope="col"></th>
                                         @endcan
@@ -64,6 +65,9 @@
                                             <td>{{ $empleado->CURP }}</td>
                                             <td>{{ $empleado->Telefono }}</td>
                                             <td>{{ $empleado->NoContrato }}</td>
+                                            <td>
+                                                <input type="checkbox" data-toggle="toggle" data-size="sm" class="activo-toggle" data-id="{{ $empleado->id }}" {{ $empleado->activo ? 'checked' : '' }}>
+                                            </td>
                                             <td class="text-right">
                                                 @if (auth()->user()->can('update', $empleado) || auth()->user()->can('delete', $empleado) || auth()->user()->can('assign', $empleado))
                                                     <div class="dropdown">
@@ -145,6 +149,34 @@
             var fileName = document.getElementById("excelFile").files[0].name;
             var nextSibling = e.target.nextElementSibling
             nextSibling.innerText = fileName;
+        });
+
+        // Manejar cambios en el switch de activo/inactivo
+        document.querySelectorAll('.activo-toggle').forEach(function(toggle) {
+            toggle.addEventListener('change', function() {
+                var empleadoId = this.dataset.id;
+                var isActive = this.checked;
+
+                fetch(`/empleado/${empleadoId}/toggle-active`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ activo: isActive })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Error al actualizar el estado del empleado.');
+                        this.checked = !isActive; // Revertir el cambio si hubo un error
+                    }
+                })
+                .catch(() => {
+                    alert('Error al actualizar el estado del empleado.');
+                    this.checked = !isActive; // Revertir el cambio si hubo un error
+                });
+            });
         });
     </script>
 @endsection

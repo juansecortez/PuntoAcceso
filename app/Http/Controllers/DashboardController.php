@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Contrato;
@@ -17,7 +16,10 @@ class DashboardController extends Controller
         $year = $request->input('year', $years->first() ?? date('Y')); // Usa el primer año disponible o el año actual como default
     
         $contratosCount = Contrato::count();
-        $empleadosCount = Empleado::count();
+
+        // Contar solo los empleados activos
+        $empleadosCount = Empleado::where('activo', true)->count();
+        
         $puertasEntradaCount = Puerta::where('Tipo', 'Entrada')->count();
         $puertasSalidaCount = Puerta::where('Tipo', 'Salida')->count();
     
@@ -26,6 +28,8 @@ class DashboardController extends Controller
             DB::raw('COUNT(*) as conteo')
         )
         ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
+        ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+        ->where('empleados.activo', true) // Filtrar por empleados activos
         ->where('puertas.Tipo', 'Entrada')
         ->whereYear('Fecha', $year)
         ->groupBy(DB::raw('MONTH(Fecha)'))
@@ -36,19 +40,23 @@ class DashboardController extends Controller
             DB::raw('COUNT(*) as conteo')
         )
         ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
+        ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+        ->where('empleados.activo', true) // Filtrar por empleados activos
         ->where('puertas.Tipo', 'Salida')
         ->whereYear('Fecha', $year)
         ->groupBy(DB::raw('MONTH(Fecha)'))
         ->pluck('conteo', 'mes');
     
-        // Calcular empleados por contrato
+        // Calcular empleados por contrato (solo empleados activos)
         $empleadosPorContrato = Empleado::select('NoContrato', DB::raw('COUNT(*) as conteo'))
+            ->where('activo', true)
             ->groupBy('NoContrato')
             ->pluck('conteo', 'NoContrato');
     
-        // Calcular uso de puertas por contrato
+        // Calcular uso de puertas por contrato (solo empleados activos)
         $usoPuertasPorContrato = UsoPuerta::select('empleados.NoContrato', DB::raw('COUNT(*) as conteo'))
             ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
+            ->where('empleados.activo', true) // Filtrar por empleados activos
             ->whereYear('uso_puerta.Fecha', $year)
             ->groupBy('empleados.NoContrato')
             ->pluck('conteo', 'empleados.NoContrato');
@@ -73,5 +81,4 @@ class DashboardController extends Controller
             'usoEntrada', 'usoSalida', 'empleadosPorContrato', 'usoPuertasPorContrato', 'year', 'years'
         ));
     }
-    
 }
