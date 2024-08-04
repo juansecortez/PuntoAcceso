@@ -12,7 +12,10 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 class EmpleadoController extends Controller
+
 {
     public function __construct()
     {
@@ -28,7 +31,12 @@ class EmpleadoController extends Controller
     {
         $this->authorize('viewAny', Empleado::class);
 
-        $empleados = Empleado::all();
+        // Obtener la organización del usuario autenticado
+        $organizacionId = Auth::user()->organizacion_id;
+
+        // Filtrar empleados por la organización del usuario
+        $empleados = Empleado::where('organizacion_id', $organizacionId)->get();
+
         return view('empleados.index', compact('empleados'));
     }
 
@@ -41,10 +49,14 @@ class EmpleadoController extends Controller
     {
         $this->authorize('create', Empleado::class);
     
-        $contratos = Contrato::all();
+        // Obtener la organización del usuario autenticado
+        $organizacionId = Auth::user()->organizacion_id;
+
+        // Filtrar contratos por la organización del usuario
+        $contratos = Contrato::where('organizacion_id', $organizacionId)->get();
+        
         return view('empleados.create', compact('contratos'));
     }
-    
 
       /**
      * Store a newly created empleado in storage.
@@ -67,6 +79,9 @@ class EmpleadoController extends Controller
         // Si el campo 'activo' no está en la solicitud, asigna true por defecto
         $data['activo'] = $request->input('activo', true);
         $data['fecha_baja'] = $data['activo'] ? null : Carbon::today()->toDateString();
+        
+        // Agregar organizacion_id del usuario autenticado
+        $data['organizacion_id'] = Auth::user()->organizacion_id;
     
         Empleado::create($data);
     

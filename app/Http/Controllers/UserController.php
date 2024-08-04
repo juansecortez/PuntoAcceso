@@ -21,6 +21,7 @@ use App\Role;
 use App\User;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -39,9 +40,14 @@ class UserController extends Controller
     {
         $this->authorize('manage-users', User::class);
 
-        return view('users.index', ['users' => $model->with('role')->get()]);
-    }
+        // Obtener la organización del usuario autenticado
+        $organizacionId = Auth::user()->organizacion_id;
 
+        // Filtrar usuarios por la organización del usuario autenticado
+        $users = $model->with('role')->where('organizacion_id', $organizacionId)->get();
+
+        return view('users.index', ['users' => $users]);
+    }
     /**
      * Show the form for creating a new user
      *
@@ -62,9 +68,14 @@ class UserController extends Controller
      */
     public function store(UserRequest $request, User $model)
     {
+        // Obtener el organizacion_id del usuario autenticado
+        $organizacionId = Auth::user()->organizacion_id;
+
+        // Crear el usuario con el organizacion_id del usuario autenticado
         $model->create($request->merge([
             'picture' => $request->photo ? $request->photo->store('profiles', 'public') : null,
-            'password' => Hash::make($request->get('password'))
+            'password' => Hash::make($request->get('password')),
+            'organizacion_id' => $organizacionId // Agregar organizacion_id
         ])->all());
 
         return redirect()->route('user.index')->withStatus(__('User successfully created.'));

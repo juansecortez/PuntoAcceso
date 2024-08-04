@@ -16,10 +16,15 @@ class Contrato extends Model
         'NoContrato',
         'EncargadoInterno',
         'EncargadoExterno',
+        'organizacion_id'
     ];
 
     public function empleados()
     {
         return $this->hasMany(Empleado::class, 'NoContrato', 'NoContrato');
+    }
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organizacion_id');
     }
 }

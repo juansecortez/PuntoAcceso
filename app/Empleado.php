@@ -22,8 +22,9 @@ class Empleado extends Model
         'photo',
         'FechaInicioContrato',
         'FechaNacimiento',
-        'activo', // nuevo campo
-        'fecha_baja' // nuevo campo
+        'activo', 
+        'fecha_baja', 
+         'organizacion_id'
     ];
 
     public function profilePicture()
@@ -49,5 +50,9 @@ class Empleado extends Model
     public function usoPuertas()
     {
         return $this->hasMany(UsoPuerta::class, 'IdEmpleado');
+    }
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organizacion_id');
     }
 }

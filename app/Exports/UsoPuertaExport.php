@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class UsoPuertaExport implements FromQuery, WithHeadings, WithMapping
 {
@@ -16,20 +17,24 @@ class UsoPuertaExport implements FromQuery, WithHeadings, WithMapping
     protected $fechaFin;
     protected $contrato;
     protected $empleadosFiltro;
+    protected $organizacionId;
 
-    public function __construct($fechaInicio, $fechaFin, $contrato, $empleadosFiltro)
+    public function __construct($fechaInicio, $fechaFin, $contrato, $empleadosFiltro, $organizacionId)
     {
         $this->fechaInicio = $fechaInicio;
         $this->fechaFin = $fechaFin;
         $this->contrato = $contrato;
         $this->empleadosFiltro = $empleadosFiltro;
+        $this->organizacionId = $organizacionId;
     }
 
     public function query()
     {
         $query = UsoPuerta::query()
             ->join('empleados', 'uso_puerta.IdEmpleado', '=', 'empleados.id')
-            ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id');
+            ->join('puertas', 'uso_puerta.IdPuerta', '=', 'puertas.id')
+            ->where('empleados.organizacion_id', $this->organizacionId) // Filtrar por organización
+            ->where('empleados.activo', true); // Filtrar por empleados activos
 
         if ($this->fechaInicio) {
             $query->where('Fecha', '>=', Carbon::parse($this->fechaInicio)->startOfDay());

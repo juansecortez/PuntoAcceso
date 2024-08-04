@@ -6,7 +6,7 @@ use App\Contrato;
 use App\Empleado;
 use App\Http\Requests\ContratoRequest;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class ContratoController extends Controller
 {
     public function __construct()
@@ -23,7 +23,11 @@ class ContratoController extends Controller
     {
         $this->authorize('viewAny', Contrato::class);
 
-        $contratos = Contrato::all();
+          // Obtener la organización del usuario autenticado
+          $organizacionId = Auth::user()->organizacion_id;
+
+          // Filtrar contratos por la organización del usuario
+          $contratos = Contrato::where('organizacion_id', $organizacionId)->get();
         return view('contratos.index', compact('contratos'));
     }
 
@@ -50,7 +54,8 @@ class ContratoController extends Controller
         $this->authorize('create', Contrato::class);
 
         $data = $request->all();
-
+  // Agregar organizacion_id del usuario autenticado
+  $data['organizacion_id'] = Auth::user()->organizacion_id;
         Contrato::create($data);
 
         return redirect()->route('contrato.index')->withStatus(__('Contrato successfully created.'));

@@ -12,24 +12,34 @@ class Organization extends Model
         'name', 'banner'
     ];
 
-    public function connections()
+    // Relación con usuarios
+    public function users()
     {
-        return $this->hasMany(Connection::class);
+        return $this->hasMany(User::class, 'organizacion_id');
     }
 
+    // Relación con empleados
     public function empleados()
     {
-        return $this->hasMany(Empleado::class, 'organization_id');
+        return $this->hasMany(Empleado::class, 'organizacion_id');
     }
-    public function resolveRouteBinding($value, $field = null)
+
+    // Relación con contratos
+    public function contratos()
     {
-        $query = $this->on('organization')->where($field ?? $this->getRouteKeyName(), $value);
-        $result = $query->first();
-        \Log::info("Intentando resolver enlace de ruta para Empleado con valor: {$value}");
-        if (!$result) {
-            \Log::error("Empleado no encontrado en la base de datos de la organización");
-        }
-        return $result;
+        return $this->hasMany(Contrato::class, 'organizacion_id');
+    }
+
+    // Relación con puertas
+    public function puertas()
+    {
+        return $this->hasMany(Puerta::class, 'organizacion_id');
+    }
+
+    // Relación con uso de puertas
+    public function usoPuertas()
+    {
+        return $this->hasMany(UsoPuerta::class, 'organizacion_id');
     }
 }
 

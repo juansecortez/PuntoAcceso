@@ -18,6 +18,7 @@ class Puerta extends Model
         'latitude',
         'longitud',
         'Tipo',
+        'organizacion_id'
     ];
 
 
@@ -30,5 +31,8 @@ class Puerta extends Model
     {
         return $this->hasMany(UsoPuerta::class, 'IdPuerta');
     }
-    
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organizacion_id');
+    }
 }

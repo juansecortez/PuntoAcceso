@@ -44,7 +44,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'picture' ,'role_id'
+        'name', 'email', 'password', 'picture' ,'role_id', 'organizacion_id'
     ];
 
     /**
@@ -108,5 +108,9 @@ class User extends Authenticatable
     public function isMember()
     {
         return $this->role_id == 3;
+    }
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organizacion_id');
     }
 }
